@@ -30,9 +30,9 @@ namespace RicKit.RDebug
                     OnHide();
             });
         }
-        protected virtual Color TextColor { get; } = Color.white;
-        protected virtual Color BgColor { get; } = new Color(0, 0f, 0, 0.7f);
-        protected virtual Sprite BgSprite { get; } = null;
+        protected Color TextColor { get; set; } = Color.white;
+        protected Color BgColor { get; set; } = new Color(0, 0f, 0, 0.7f);
+        protected Sprite BgSprite { get; set; } = null;
         protected abstract void OnShow();
         public void OnHide()
         {
@@ -66,7 +66,13 @@ namespace RicKit.RDebug
         {
             var button =
                 new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button)).GetComponent<Button>();
-            button.targetGraphic.GetComponent<Image>().sprite = BgSprite;
+            if (BgSprite)
+            {
+                var img = button.targetGraphic.GetComponent<Image>();
+                img.sprite = BgSprite;
+                if (BgSprite.border != Vector4.zero)
+                    img.type = Image.Type.Sliced;
+            }
             button.targetGraphic.color = BgColor;
             button.transform.SetParent(currentTransform, false);
             button.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
@@ -90,8 +96,13 @@ namespace RicKit.RDebug
         {
             var inputField = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(InputField))
                 .GetComponent<InputField>();
-            inputField.targetGraphic.GetComponent<Image>().sprite = BgSprite;
-            inputField.targetGraphic.color = BgColor;
+            if (BgSprite)
+            {
+                var img = inputField.targetGraphic.GetComponent<Image>();
+                img.sprite = BgSprite;
+                if (BgSprite.border != Vector4.zero)
+                    img.type = Image.Type.Sliced;
+            }
             inputField.transform.SetParent(currentTransform, false);
             inputField.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
             var txt = new GameObject("Text", typeof(Text)).GetComponent<Text>();

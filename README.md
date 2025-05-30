@@ -13,13 +13,14 @@ RicKit RDebug 是一个基于 Unity 的调试面板工具，支持快速创建�
 - 一键生成调试面板
 - 支持按钮、输入框等常用控件
 - 支持自定义布局（垂直/水平）
+- 支持按钮和输入框的颜色、字体等自定义
 - 适用于 Unity MonoBehaviour
 
 ---
 
 ## 快速开始
 
-1. 新建一个类继承 `RDebug`，实现 `OnShow()` 方法：
+1. 新建一个类继承 `RDebug`，实现 `OnShow()` 方法，并可自定义属性：
 
 ```csharp
 using RicKit.RDebug;
@@ -27,26 +28,22 @@ using UnityEngine;
 
 public class MyDebugPanel : RDebug
 {
+    protected override void Awake()
+    {
+        // 可在Awake中自定义样式
+        TextColor = Color.yellow;
+        BgColor = new Color(0.2f, 0.2f, 0.2f, 0.8f);
+        // BgSprite = ... // 可自定义背景图片
+        base.Awake();
+    }
+
     protected override void OnShow()
     {
         UsingHorizontalLayoutGroup(() =>
         {
-            CreateButton("打印日志", () => Debug.Log("点击了按钮"));
-            CreateInputField("输入内容", value => Debug.Log($"输入: {value}"));
+            CreateButton("自定义按钮", () => Debug.Log("点击了自定义按钮"));
+            CreateInputField("自定义输入", value => Debug.Log($"输入: {value}"));
         });
-    }
-}
-```
-
-2. 在场景中挂载该组件，并调用 `Init()` 初始化：
-
-```csharp
-public class DebugEntry : MonoBehaviour
-{
-    void Start()
-    {
-        var panel = gameObject.AddComponent<MyDebugPanel>();
-        panel.Init();
     }
 }
 ```
@@ -70,6 +67,12 @@ public class DebugEntry : MonoBehaviour
 
 - `UsingHorizontalLayoutGroup(Action action, int height = 100)`
   - 在水平方向布局一组控件
+
+### 样式自定义
+
+- `protected Color TextColor { get; set; }`
+- `protected Color BgColor { get; set; }`
+- `protected Sprite BgSprite { get; set; }`
 
 ---
 

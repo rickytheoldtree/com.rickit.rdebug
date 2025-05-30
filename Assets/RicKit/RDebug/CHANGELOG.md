@@ -1,4 +1,6 @@
 # Changelog
+## [1.0.2] - 2025-05-30
+- Update README and RDebug class for enhanced customization options
 ## [1.0.1] - 2025-05-30
 - RDebug class for improved button handling and color customization
 ## [1.0.0] - 2025-05-30
