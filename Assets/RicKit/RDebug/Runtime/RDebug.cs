@@ -7,6 +7,9 @@ namespace RicKit.RDebug
 {
     public abstract class RDebug : MonoBehaviour
     {
+        private Button btnDebug;
+        private bool panelShow;
+
         protected virtual void Awake()
         {
             var layoutGroup = gameObject.AddComponent<VerticalLayoutGroup>();
@@ -15,10 +18,7 @@ namespace RicKit.RDebug
             layoutGroup.childForceExpandWidth = false;
             layoutGroup.childForceExpandHeight = false;
         }
-
-        private Button btnDebug;
-
-        public void Init()
+        private void Start()
         {
             currentTransform = transform;
             btnDebug = CreateButton( "Debug", () =>
@@ -27,18 +27,22 @@ namespace RicKit.RDebug
                 if (panelShow)
                     OnShow();
                 else
-                {
-                    foreach (Transform child in transform)
-                    {
-                        if (child == btnDebug.transform) continue;
-                        Destroy(child.gameObject);
-                    }
-                }
+                    OnHide();
             });
         }
-        
-        private bool panelShow;
+        protected virtual Color TextColor { get; } = Color.white;
+        protected virtual Color BgColor { get; } = new Color(0, 0f, 0, 0.7f);
+        protected virtual Sprite BgSprite { get; } = null;
         protected abstract void OnShow();
+        public void OnHide()
+        {
+            panelShow = false;
+            foreach (Transform child in transform)
+            {
+                if (child == btnDebug.transform) continue;
+                Destroy(child.gameObject);
+            }
+        }
         private Transform currentTransform;
         protected void UsingHorizontalLayoutGroup(Action action, int height = 100)
         {
@@ -62,7 +66,8 @@ namespace RicKit.RDebug
         {
             var button =
                 new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button)).GetComponent<Button>();
-            button.targetGraphic.color = new Color(1, 1, 1, 0.7f);
+            button.targetGraphic.GetComponent<Image>().sprite = BgSprite;
+            button.targetGraphic.color = BgColor;
             button.transform.SetParent(currentTransform, false);
             button.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
             var txt = new GameObject("Text", typeof(Text)).GetComponent<Text>();
@@ -74,7 +79,7 @@ namespace RicKit.RDebug
             txt.text = name;
             txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             txt.alignment = TextAnchor.MiddleCenter;
-            txt.color = Color.black;
+            txt.color = TextColor;
             txt.fontSize = fontSize;
             button.onClick.AddListener(onClick);
             return button;
@@ -85,7 +90,8 @@ namespace RicKit.RDebug
         {
             var inputField = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(InputField))
                 .GetComponent<InputField>();
-            inputField.targetGraphic.color = new Color(1, 1, 1, 0.7f);
+            inputField.targetGraphic.GetComponent<Image>().sprite = BgSprite;
+            inputField.targetGraphic.color = BgColor;
             inputField.transform.SetParent(currentTransform, false);
             inputField.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
             var txt = new GameObject("Text", typeof(Text)).GetComponent<Text>();
@@ -97,7 +103,7 @@ namespace RicKit.RDebug
             rtTxt.sizeDelta = new Vector2(-10, 0);
             txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             txt.alignment = TextAnchor.MiddleLeft;
-            txt.color = Color.black;
+            txt.color = TextColor;
             txt.fontSize = fontSize;
             var placeholder = new GameObject("Placeholder", typeof(Text)).GetComponent<Text>();
             inputField.placeholder = placeholder;
