@@ -103,6 +103,7 @@ namespace RicKit.RDebug
                 if (BgSprite.border != Vector4.zero)
                     img.type = Image.Type.Sliced;
             }
+            inputField.targetGraphic.color = BgColor;
             inputField.transform.SetParent(currentTransform, false);
             inputField.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
             var txt = new GameObject("Text", typeof(Text)).GetComponent<Text>();
