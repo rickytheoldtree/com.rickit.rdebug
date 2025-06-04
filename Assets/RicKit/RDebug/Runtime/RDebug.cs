@@ -165,6 +165,7 @@ namespace RicKit.RDebug
             rtText.anchorMax = Vector2.one;
             rtText.sizeDelta = Vector2.zero;
             var txt = goText.GetComponent<Text>();
+            txt.text = name;
             txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             txt.alignment = TextAnchor.MiddleLeft;
             txt.color = TextColor;
