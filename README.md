@@ -2,25 +2,27 @@
 
 [![openupm](https://img.shields.io/npm/v/com.rickit.rdebug?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.rickit.rdebug/)
 
-## 简介
+---
 
-RicKit RDebug 是一个基于 Unity 的调试面板工具，支持快速创建自定义调试 UI。通过继承 `RDebug` 抽象类，可以方便地添加按钮、输入框等控件，实现运行时调试和参数调整。
+## Introduction
+
+RicKit RDebug is a Unity-based debug panel utility for quickly creating custom runtime debug UIs. By inheriting from the abstract `RDebug` class, you can easily add buttons, input fields, and more for runtime debugging and parameter tweaking.
 
 ---
 
-## 主要特性
+## Features
 
-- 一键生成调试面板
-- 支持按钮、输入框等常用控件
-- 支持自定义布局（垂直/水平）
-- 支持按钮和输入框的颜色、字体等自定义
-- 适用于 Unity MonoBehaviour
+- One-click creation of a debug panel.
+- Supports common controls like buttons and input fields.
+- Flexible layout options (vertical/horizontal).
+- Customizable button/input field styles (color, font, etc.).
+- Designed for Unity MonoBehaviour workflow.
 
 ---
 
-## 快速开始
+## Quick Start
 
-1. 新建一个类继承 `RDebug`，实现 `OnShow()` 方法，并可自定义属性：
+1. Create a new class that inherits from `RDebug` and implement the `OnShow()` method. You can also override properties for customization.
 
 ```csharp
 using RicKit.RDebug;
@@ -30,10 +32,10 @@ public class MyDebugPanel : RDebug
 {
     protected override void Awake()
     {
-        // 可在Awake中自定义样式
+        // Customize styles in Awake
         TextColor = Color.yellow;
         BgColor = new Color(0.2f, 0.2f, 0.2f, 0.8f);
-        // BgSprite = ... // 可自定义背景图片
+        // BgSprite = ... // set a custom background image if desired
         base.Awake();
     }
 
@@ -41,8 +43,8 @@ public class MyDebugPanel : RDebug
     {
         UsingHorizontalLayoutGroup(() =>
         {
-            CreateButton("自定义按钮", () => Debug.Log("点击了自定义按钮"));
-            CreateInputField("自定义输入", value => Debug.Log($"输入: {value}"));
+            CreateButton("customBtn", "My Button", () => Debug.Log("Button clicked!"));
+            CreateInputField("customInput", "Input", value => Debug.Log($"Input: {value}"));
         });
     }
 }
@@ -50,25 +52,42 @@ public class MyDebugPanel : RDebug
 
 ---
 
-## API 说明
+## API Reference
 
-### 继承点
+### Inheritance Point
 
 - `protected abstract void OnShow()`
-  - 实现自定义面板内容
+  - Implement this to define the content of your debug panel.
 
-### 常用方法
+### Common Methods
 
-- `CreateButton(string name, UnityAction onClick, int width = 100, int height = 100, int fontSize = 30)`
-  - 创建按钮
+- `protected Button CreateButton(string key, string name, UnityAction onClick, int width = 100, int height = 100, int fontSize = 30)`
+  - Add a button to the panel.
+  - `key`: Unique identifier for the button.
+  - `name`: Display text.
+  - `onClick`: Callback when button is pressed.
 
-- `CreateInputField(string name, UnityAction<string> onValueChanged, int width = 100, int height = 100, int fontSize = 30, string defaultValue = "")`
-  - 创建输入框
+- `protected InputField CreateInputField(string key, string name, UnityAction<string> onValueChanged, int width = 100, int height = 100, int fontSize = 30, string defaultValue = "")`
+  - Add an input field.
+  - `key`: Unique identifier.
+  - `name`: Label text.
+  - `onValueChanged`: Callback on text change.
 
-- `UsingHorizontalLayoutGroup(Action action, int height = 100)`
-  - 在水平方向布局一组控件
+- `protected GameObject CreateLabel(string key, string name, int width = 100, int height = 100, int fontSize = 30)`
+  - Add a label (display-only text) to the panel.
 
-### 样式自定义
+- `protected void UsingHorizontalLayoutGroup(Action action, int height = 100)`
+  - Group controls horizontally.
+
+- `public void OnHide()`
+  - Manually hide the debug panel and clear controls.
+
+### Fields and Properties
+
+- `protected Dictionary<string, GameObject> Components { get; }`
+  - Stores references to all created UI elements (buttons, input fields, labels, etc.) with their corresponding keys.
+
+### Style Customization
 
 - `protected Color TextColor { get; set; }`
 - `protected Color BgColor { get; set; }`
@@ -76,21 +95,35 @@ public class MyDebugPanel : RDebug
 
 ---
 
-## 注意事项
+## Notes
 
-- 需在 Unity 环境下使用
-- 需挂载在场景对象上
-- 控件样式可根据需求自定义
-
----
-
-## 开源协议
-
-Apache License
+- Must be used within a Unity project.
+- Attach your custom debug class to a GameObject in your scene.
+- Style and layout can be freely customized.
 
 ---
 
-## 相关链接
+## License
 
-- [GitHub 仓库](https://github.com/rickytheoldtree/com.rickit.rdebug)
-- [OpenUPM 页面](https://openupm.com/packages/com.rickit.rdebug/)
+Apache License 2.0
+
+---
+
+## Links
+
+- [GitHub Repository](https://github.com/rickytheoldtree/com.rickit.rdebug)
+- [OpenUPM Page](https://openupm.com/packages/com.rickit.rdebug/)
+
+---
+
+## Changelog
+
+See [`Assets/RicKit/RDebug/CHANGELOG.md`](Assets/RicKit/RDebug/CHANGELOG.md) for the latest updates.
+
+Recent changes (v1.1.0):
+- Refactored the `RDebug` class for more effective UI component management.
+- API changes:  
+  - All control creation methods (`CreateButton`, `CreateInputField`, etc.) now require a unique `key` parameter as the first argument.
+  - Added `CreateLabel` for display-only text.
+  - Improved panel clearing and layout group management.
+  - Exposed `Components` dictionary for managing and accessing all created UI elements.
