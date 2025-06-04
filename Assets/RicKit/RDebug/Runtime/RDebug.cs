@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -7,7 +8,6 @@ namespace RicKit.RDebug
 {
     public abstract class RDebug : MonoBehaviour
     {
-        private Button btnDebug;
         private bool panelShow;
 
         protected virtual void Awake()
@@ -21,7 +21,7 @@ namespace RicKit.RDebug
         private void Start()
         {
             currentTransform = transform;
-            btnDebug = CreateButton( "Debug", () =>
+            CreateButton("Debug", "Debug", () =>
             {
                 panelShow = !panelShow;
                 if (panelShow)
@@ -30,6 +30,7 @@ namespace RicKit.RDebug
                     OnHide();
             });
         }
+        protected Dictionary<string, GameObject> Components { get; } = new();
         protected Color TextColor { get; set; } = Color.white;
         protected Color BgColor { get; set; } = new Color(0, 0f, 0, 0.7f);
         protected Sprite BgSprite { get; set; } = null;
@@ -37,11 +38,17 @@ namespace RicKit.RDebug
         public void OnHide()
         {
             panelShow = false;
-            foreach (Transform child in transform)
+            var debugButton = Components["Debug"];
+            foreach (var component in Components)
             {
-                if (child == btnDebug.transform) continue;
-                Destroy(child.gameObject);
+                if(component.Key == "Debug") continue;
+                if (component.Value)
+                {
+                    Destroy(component.Value);
+                }
             }
+            Components.Clear();
+            Components["Debug"] = debugButton;
         }
         private Transform currentTransform;
         protected void UsingHorizontalLayoutGroup(Action action, int height = 100)
@@ -61,11 +68,12 @@ namespace RicKit.RDebug
             currentTransform = lastTransform;
         }
 
-        protected Button CreateButton(string name, UnityAction onClick, int width = 100,
+        protected Button CreateButton(string key, string name, UnityAction onClick, int width = 100,
             int height = 100, int fontSize = 30)
         {
             var button =
                 new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button)).GetComponent<Button>();
+            Components.Add(key, button.gameObject);
             if (BgSprite)
             {
                 var img = button.targetGraphic.GetComponent<Image>();
@@ -91,11 +99,12 @@ namespace RicKit.RDebug
             return button;
         }
 
-        protected InputField CreateInputField(string name,
+        protected InputField CreateInputField(string key, string name,
             UnityAction<string> onValueChanged, int width = 100, int height = 100, int fontSize = 30, string defaultValue = "")
         {
             var inputField = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(InputField))
                 .GetComponent<InputField>();
+            Components.Add(key, inputField.gameObject);
             if (BgSprite)
             {
                 var img = inputField.targetGraphic.GetComponent<Image>();
@@ -132,6 +141,35 @@ namespace RicKit.RDebug
             inputField.text = defaultValue;
             inputField.onValueChanged.AddListener(onValueChanged);
             return inputField;
+        }
+        
+        protected GameObject CreateLabel(string key, string name, int width = 100, int height = 100, int fontSize = 30)
+        {
+            var label = new GameObject(name, typeof(RectTransform), typeof(Image));
+            Components.Add(key, label);
+            var img = label.GetComponent<Image>();
+            if (BgSprite)
+            {
+                img.sprite = BgSprite;
+                if (BgSprite.border != Vector4.zero)
+                    img.type = Image.Type.Sliced;
+            }
+            img.color = BgColor;
+            label.transform.SetParent(currentTransform, false);
+            var rtLabel = label.GetComponent<RectTransform>();
+            rtLabel.sizeDelta = new Vector2(width, height);
+            var goText = new GameObject("Text", typeof(Text));
+            goText.transform.SetParent(label.transform, false);
+            var rtText = goText.GetComponent<RectTransform>();
+            rtText.anchorMin = Vector2.zero;
+            rtText.anchorMax = Vector2.one;
+            rtText.sizeDelta = Vector2.zero;
+            var txt = goText.AddComponent<Text>();
+            txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            txt.alignment = TextAnchor.MiddleLeft;
+            txt.color = TextColor;
+            txt.fontSize = fontSize;
+            return label;
         }
     }
 }
