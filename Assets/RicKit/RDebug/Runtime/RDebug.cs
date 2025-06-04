@@ -9,7 +9,12 @@ namespace RicKit.RDebug
     public abstract class RDebug : MonoBehaviour
     {
         private bool panelShow;
-
+        private Transform currentTransform;
+        private List<GameObject> layoutGroups = new List<GameObject>();
+        protected Dictionary<string, GameObject> Components { get; } = new();
+        protected Color TextColor { get; set; } = Color.white;
+        protected Color BgColor { get; set; } = new Color(0, 0f, 0, 0.7f);
+        protected Sprite BgSprite { get; set; } = null;
         protected virtual void Awake()
         {
             var layoutGroup = gameObject.AddComponent<VerticalLayoutGroup>();
@@ -30,10 +35,6 @@ namespace RicKit.RDebug
                     OnHide();
             });
         }
-        protected Dictionary<string, GameObject> Components { get; } = new();
-        protected Color TextColor { get; set; } = Color.white;
-        protected Color BgColor { get; set; } = new Color(0, 0f, 0, 0.7f);
-        protected Sprite BgSprite { get; set; } = null;
         protected abstract void OnShow();
         public void OnHide()
         {
@@ -49,14 +50,23 @@ namespace RicKit.RDebug
             }
             Components.Clear();
             Components["Debug"] = debugButton;
+            
+            foreach (var layoutGroup in layoutGroups)
+            {
+                if (layoutGroup)
+                {
+                    Destroy(layoutGroup);
+                }
+            }
+            layoutGroups.Clear();
         }
-        private Transform currentTransform;
         protected void UsingHorizontalLayoutGroup(Action action, int height = 100)
         {
             var lastTransform = currentTransform;
             var layoutGroup =
                 new GameObject("HorizontalLayoutGroup", typeof(RectTransform), typeof(HorizontalLayoutGroup))
                     .GetComponent<HorizontalLayoutGroup>();
+            layoutGroups.Add(layoutGroup.gameObject);
             currentTransform = layoutGroup.transform;
             layoutGroup.transform.SetParent(transform, false);
             layoutGroup.GetComponent<RectTransform>().sizeDelta = new Vector2(0, height);
