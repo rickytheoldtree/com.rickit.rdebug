@@ -74,15 +74,15 @@ namespace RicKit.RDebug
             var button =
                 new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button)).GetComponent<Button>();
             Components.Add(key, button.gameObject);
+            button.transform.SetParent(currentTransform, false);
+            var img = button.targetGraphic.GetComponent<Image>();
             if (BgSprite)
             {
-                var img = button.targetGraphic.GetComponent<Image>();
                 img.sprite = BgSprite;
                 if (BgSprite.border != Vector4.zero)
                     img.type = Image.Type.Sliced;
             }
-            button.targetGraphic.color = BgColor;
-            button.transform.SetParent(currentTransform, false);
+            img.color = BgColor;
             button.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
             var txt = new GameObject("Text", typeof(Text)).GetComponent<Text>();
             txt.transform.SetParent(button.transform, false);
@@ -105,15 +105,15 @@ namespace RicKit.RDebug
             var inputField = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(InputField))
                 .GetComponent<InputField>();
             Components.Add(key, inputField.gameObject);
+            inputField.transform.SetParent(currentTransform, false);
+            var img = inputField.targetGraphic.GetComponent<Image>();
             if (BgSprite)
             {
-                var img = inputField.targetGraphic.GetComponent<Image>();
                 img.sprite = BgSprite;
                 if (BgSprite.border != Vector4.zero)
                     img.type = Image.Type.Sliced;
             }
-            inputField.targetGraphic.color = BgColor;
-            inputField.transform.SetParent(currentTransform, false);
+            img.color = BgColor;
             inputField.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
             var txt = new GameObject("Text", typeof(Text)).GetComponent<Text>();
             inputField.textComponent = txt;
@@ -147,6 +147,7 @@ namespace RicKit.RDebug
         {
             var label = new GameObject(name, typeof(RectTransform), typeof(Image));
             Components.Add(key, label);
+            label.transform.SetParent(currentTransform, false);
             var img = label.GetComponent<Image>();
             if (BgSprite)
             {
@@ -155,7 +156,6 @@ namespace RicKit.RDebug
                     img.type = Image.Type.Sliced;
             }
             img.color = BgColor;
-            label.transform.SetParent(currentTransform, false);
             var rtLabel = label.GetComponent<RectTransform>();
             rtLabel.sizeDelta = new Vector2(width, height);
             var goText = new GameObject("Text", typeof(Text));
@@ -164,7 +164,7 @@ namespace RicKit.RDebug
             rtText.anchorMin = Vector2.zero;
             rtText.anchorMax = Vector2.one;
             rtText.sizeDelta = Vector2.zero;
-            var txt = goText.AddComponent<Text>();
+            var txt = goText.GetComponent<Text>();
             txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             txt.alignment = TextAnchor.MiddleLeft;
             txt.color = TextColor;
