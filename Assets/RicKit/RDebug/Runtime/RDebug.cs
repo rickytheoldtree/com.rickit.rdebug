@@ -42,13 +42,14 @@ namespace RicKit.RDebug
         public void OnHide()
         {
             panelShow = false;
-            foreach (var component in transform.GetComponentsInChildren<RComponent>())
+            foreach (var component in transform.GetComponentsInChildren<UnityEngine.Component>())
             {
-                if(component.Tag == "Debug") continue;
+                if(component is not IHaveTag componentWithTag) continue;
+                if(componentWithTag.Tag == "Debug") continue;
                 Destroy(component.gameObject);
             }
         }
-        protected T GetComponentWithTag<T>(string tag) where T : RComponent
+        protected T GetComponentWithTag<T>(string tag) where T : UnityEngine.Component, IHaveTag
         {
             var components = new List<T>();
             foreach (var component in transform.GetComponentsInChildren<T>())

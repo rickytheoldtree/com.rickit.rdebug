@@ -2,7 +2,7 @@
 
 namespace RicKit.RDebug.Component
 {
-    public abstract class RComponent : MonoBehaviour
+    public interface IHaveTag
     {
         public string Tag { get; set; }
     }

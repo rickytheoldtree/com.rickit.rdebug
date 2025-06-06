@@ -3,8 +3,15 @@ using UnityEngine.UI;
 
 namespace RicKit.RDebug.Component
 {
-    public class RLabel : RComponent
+    public class RLabel : MonoBehaviour, IHaveTag
     {
+        private Text textComponent;
+        public string Tag { get; set; }
+        public string Text
+        {
+            get => textComponent.text;
+            set => textComponent.text = value;
+        }
         public void Init(string name, int width, int height, int fontSize, Color textColor, Color bgColor, Sprite bgSprite)
         {
             var img = gameObject.AddComponent<Image>();
@@ -24,12 +31,12 @@ namespace RicKit.RDebug.Component
             rtText.anchorMin = Vector2.zero;
             rtText.anchorMax = Vector2.one;
             rtText.sizeDelta = Vector2.zero;
-            var txt = goText.GetComponent<Text>();
-            txt.text = name;
-            txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            txt.alignment = TextAnchor.MiddleLeft;
-            txt.color = textColor;
-            txt.fontSize = fontSize;
+            textComponent = goText.GetComponent<Text>();
+            textComponent.text = name;
+            textComponent.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            textComponent.alignment = TextAnchor.MiddleLeft;
+            textComponent.color = textColor;
+            textComponent.fontSize = fontSize;
         }
     }
 }

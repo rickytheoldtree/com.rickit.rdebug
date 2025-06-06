@@ -4,13 +4,14 @@ using UnityEngine.UI;
 
 namespace RicKit.RDebug.Component
 {
-    public class RInputField : RComponent
+    public class RInputField : InputField, IHaveTag
     {
+        public string Tag { get; set; }
         public void Init(string name, UnityAction<string> onValueChanged, int width, int height, int fontSize,
             string defaultValue, Color textColor, Color bgColor, Sprite bgSprite)
         {
             var img = gameObject.AddComponent<Image>();
-            var inputField = gameObject.AddComponent<InputField>();
+            targetGraphic = img;
             if (bgSprite)
             {
                 img.sprite = bgSprite;
@@ -19,10 +20,10 @@ namespace RicKit.RDebug.Component
             }
 
             img.color = bgColor;
-            inputField.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
+            GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
             var txt = new GameObject("Text", typeof(Text)).GetComponent<Text>();
-            inputField.textComponent = txt;
-            txt.transform.SetParent(inputField.transform, false);
+            textComponent = txt;
+            txt.transform.SetParent(transform, false);
             var rtTxt = txt.GetComponent<RectTransform>();
             rtTxt.anchorMin = Vector2.zero;
             rtTxt.anchorMax = Vector2.one;
@@ -31,20 +32,20 @@ namespace RicKit.RDebug.Component
             txt.alignment = TextAnchor.MiddleLeft;
             txt.color = textColor;
             txt.fontSize = fontSize;
-            var placeholder = new GameObject("Placeholder", typeof(Text)).GetComponent<Text>();
-            inputField.placeholder = placeholder;
-            placeholder.transform.SetParent(inputField.transform, false);
-            var rtPlaceholder = placeholder.GetComponent<RectTransform>();
+            var goPlaceholder = new GameObject("Placeholder", typeof(Text)).GetComponent<Text>();
+            placeholder = goPlaceholder;
+            goPlaceholder.transform.SetParent(transform, false);
+            var rtPlaceholder = goPlaceholder.GetComponent<RectTransform>();
             rtPlaceholder.anchorMin = Vector2.zero;
             rtPlaceholder.anchorMax = Vector2.one;
             rtPlaceholder.sizeDelta = new Vector2(-10, 0);
-            placeholder.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            placeholder.alignment = TextAnchor.MiddleLeft;
-            placeholder.color = Color.gray;
-            placeholder.fontSize = fontSize;
-            placeholder.text = $"{name}";
-            inputField.text = defaultValue;
-            inputField.onValueChanged.AddListener(onValueChanged);
+            goPlaceholder.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            goPlaceholder.alignment = TextAnchor.MiddleLeft;
+            goPlaceholder.color = Color.gray;
+            goPlaceholder.fontSize = fontSize;
+            goPlaceholder.text = $"{name}";
+            text = defaultValue;
+            this.onValueChanged.AddListener(onValueChanged);
         }
     }
 }

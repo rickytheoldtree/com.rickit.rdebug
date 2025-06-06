@@ -1,19 +1,18 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace RicKit.RDebug.Component
 {
-    public class RHorizontalLayoutGroup : RComponent
+    public class RHorizontalLayoutGroup : HorizontalLayoutGroup, IHaveTag
     {
+        public string Tag { get; set; }
         public void Init(float height)
         {
-            var layoutGroup = gameObject.AddComponent<HorizontalLayoutGroup>();
-            layoutGroup.GetComponent<RectTransform>().sizeDelta = new Vector2(0, height);
-            layoutGroup.childControlWidth = false;
-            layoutGroup.childControlHeight = false;
-            layoutGroup.childForceExpandWidth = false;
-            layoutGroup.childForceExpandHeight = false;
+            GetComponent<RectTransform>().sizeDelta = new Vector2(0, height);
+            childControlWidth = false;
+            childControlHeight = false;
+            childForceExpandWidth = false;
+            childForceExpandHeight = false;
         }
     }
 }

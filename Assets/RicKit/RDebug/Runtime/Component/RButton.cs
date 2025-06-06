@@ -4,13 +4,14 @@ using UnityEngine.UI;
 
 namespace RicKit.RDebug.Component
 {
-    public class RButton : RComponent
+    public class RButton : Button, IHaveTag
     {
+        public string Tag { get; set; }
         public void Init(string name, UnityAction onClick,int width, int height, int fontSize,
             Color textColor, Color bgColor, Sprite bgSprite)
         {
             var img = gameObject.AddComponent<Image>();
-            var button = gameObject.AddComponent<Button>();
+            targetGraphic = img;
             if (bgSprite)
             {
                 img.sprite = bgSprite;
@@ -19,9 +20,9 @@ namespace RicKit.RDebug.Component
             }
 
             img.color = bgColor;
-            button.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
+            GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
             var txt = new GameObject("Text", typeof(Text)).GetComponent<Text>();
-            txt.transform.SetParent(button.transform, false);
+            txt.transform.SetParent(transform, false);
             var rtTxt = txt.GetComponent<RectTransform>();
             rtTxt.anchorMin = Vector2.zero;
             rtTxt.anchorMax = Vector2.one;
@@ -31,7 +32,7 @@ namespace RicKit.RDebug.Component
             txt.alignment = TextAnchor.MiddleCenter;
             txt.color = textColor;
             txt.fontSize = fontSize;
-            button.onClick.AddListener(onClick);
+            this.onClick.AddListener(onClick);
         }
     }
 }
