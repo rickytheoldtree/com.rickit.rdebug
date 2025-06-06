@@ -7,10 +7,10 @@ namespace RicKit.RDebug.Component
     public class RButton : RComponent
     {
         public void Init(string name, UnityAction onClick,int width, int height, int fontSize,
-             Color bgColor, Color textColor, Sprite bgSprite)
+            Color textColor, Color bgColor, Sprite bgSprite)
         {
+            var img = gameObject.AddComponent<Image>();
             var button = gameObject.AddComponent<Button>();
-            var img = button.targetGraphic.GetComponent<Image>();
             if (bgSprite)
             {
                 img.sprite = bgSprite;

@@ -9,8 +9,8 @@ namespace RicKit.RDebug.Component
         public void Init(string name, UnityAction<string> onValueChanged, int width, int height, int fontSize,
             string defaultValue, Color textColor, Color bgColor, Sprite bgSprite)
         {
+            var img = gameObject.AddComponent<Image>();
             var inputField = gameObject.AddComponent<InputField>();
-            var img = inputField.targetGraphic.GetComponent<Image>();
             if (bgSprite)
             {
                 img.sprite = bgSprite;
