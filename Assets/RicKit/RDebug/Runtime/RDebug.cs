@@ -51,14 +51,11 @@ namespace RicKit.RDebug
         protected T GetComponentWithTag<T>(string tag) where T : RComponent
         {
             var components = new List<T>();
-            foreach (var component in transform.GetComponentsInChildren<RComponent>())
+            foreach (var component in transform.GetComponentsInChildren<T>())
             {
                 if (component.Tag == tag)
                 {
-                    if (component is T tComponent)
-                    {
-                        components.Add(tComponent);
-                    }
+                    components.Add(component);
                 }
             }
             return components.Count > 0 ? components[0] : null;
