@@ -48,7 +48,7 @@ namespace RicKit.RDebug
                 Destroy(component.gameObject);
             }
         }
-        protected T GetComponents<T>(string tag) where T : RComponent
+        protected T GetComponentWithTag<T>(string tag) where T : RComponent
         {
             var components = new List<T>();
             foreach (var component in transform.GetComponentsInChildren<RComponent>())
