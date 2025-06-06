@@ -1,4 +1,6 @@
 # Changelog
+## [1.1.1] - 2025-06-06
+- Add RButton, RLabel, RInputField, and RHorizontalLayoutGroup components; update RDebug class for improved UI management
 ## [1.1.0] - 2025-06-04
 - refactor RDebug class to manage UI components more effectively
 ## [1.0.3] - 2025-05-30
