@@ -1,15 +1,22 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace RicKit.RDebug.Component
 {
-    public class RInputField : InputField, IHaveTag
+    public class RInputField : InputField, IRComponent
     {
-        public string Tag { get; set; }
-        public void Init(string name, UnityAction<string> onValueChanged, int width, int height, int fontSize,
-            string defaultValue, Color textColor, Color bgColor, Sprite bgSprite)
+        private Action<RInputField> onUpdated;
+        public void OnUpdate()
         {
+            onUpdated?.Invoke(this);
+        }
+
+        public void Init(string name, UnityAction<string> onValueChanged, int width, int height, int fontSize,
+            string defaultValue, Color textColor, Color bgColor, Sprite bgSprite, Action<RInputField> onUpdated = null)
+        {
+            this.onUpdated = onUpdated;
             var img = gameObject.AddComponent<Image>();
             targetGraphic = img;
             if (bgSprite)

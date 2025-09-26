@@ -1,4 +1,6 @@
 # Changelog
+## [1.2.0] - 2025-09-26
+- Replaced IHaveTag with IRComponent, introducing an OnUpdate method for all custom UI components. Updated RButton, RLabel, RInputField, and RHorizontalLayoutGroup to implement IRComponent and support per-frame updates via OnUpdate. Refactored RDebug to manage and update IRComponent instances, removed tag-based component management, and improved extensibility for UI updates.
 ## [1.1.5] - 2025-06-06
 - Add RButton, RLabel, RInputField, and RHorizontalLayoutGroup components; update RDebug class for improved UI management
 ## [1.1.0] - 2025-06-04

@@ -2,8 +2,8 @@
 
 namespace RicKit.RDebug.Component
 {
-    public interface IHaveTag
+    public interface IRComponent
     {
-        public string Tag { get; set; }
+        public void OnUpdate();
     }
 }

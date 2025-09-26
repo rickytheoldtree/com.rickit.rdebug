@@ -1,19 +1,27 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace RicKit.RDebug.Component
 {
-    public class RLabel : MonoBehaviour, IHaveTag
+    public class RLabel : MonoBehaviour, IRComponent
     {
         private Text textComponent;
-        public string Tag { get; set; }
+        private Action<RLabel> onUpdate;
+        public void OnUpdate()
+        {
+            onUpdate?.Invoke(this);
+        }
+
         public string Text
         {
             get => textComponent.text;
             set => textComponent.text = value;
         }
-        public void Init(string name, int width, int height, int fontSize, Color textColor, Color bgColor, Sprite bgSprite)
+        public void Init(string name, int width, int height, int fontSize, Color textColor, Color bgColor, Sprite bgSprite,
+            Action<RLabel> onUpdate)
         {
+            this.onUpdate = onUpdate;
             var img = gameObject.AddComponent<Image>();
             if (bgSprite)
             {

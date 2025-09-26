@@ -11,6 +11,8 @@ namespace RicKit.RDebug
     {
         private bool panelShow;
         private Transform currentTransform;
+        protected RButton btnDebug;
+        private IRComponent[] components;
         protected Color TextColor { get; set; } = Color.white;
         protected Color BgColor { get; set; } = new Color(0, 0f, 0, 0.7f);
         protected Sprite BgSprite { get; set; } = null;
@@ -27,14 +29,30 @@ namespace RicKit.RDebug
         private void Start()
         {
             currentTransform = transform;
-            CreateButton("Debug", () =>
+            btnDebug = CreateButton("Debug", _ =>
             {
                 panelShow = !panelShow;
                 if (panelShow)
+                {
                     OnShow();
+                    components = transform.GetComponentsInChildren<IRComponent>();
+                }
                 else
+                {
                     OnHide();
-            }, tag: "Debug");
+                    components = null;
+                }
+            });
+        }
+
+        protected void Update()
+        {
+            if (!panelShow) return;
+            if (components == null) return;
+            foreach (var component in components)
+            {
+                component.OnUpdate();
+            }
         }
 
         protected abstract void OnShow();
@@ -44,29 +62,15 @@ namespace RicKit.RDebug
             panelShow = false;
             foreach (var component in transform.GetComponentsInChildren<UnityEngine.Component>())
             {
-                if(component is not IHaveTag componentWithTag) continue;
-                if(componentWithTag.Tag == "Debug") continue;
+                if(component == btnDebug) continue;
                 Destroy(component.gameObject);
             }
-        }
-        protected T GetComponentWithTag<T>(string tag) where T : UnityEngine.Component, IHaveTag
-        {
-            var components = new List<T>();
-            foreach (var component in transform.GetComponentsInChildren<T>())
-            {
-                if (component.Tag == tag)
-                {
-                    components.Add(component);
-                }
-            }
-            return components.Count > 0 ? components[0] : null;
         }
 
         protected void UsingHorizontalLayoutGroup(Action action, int height = 100)
         {
             var lastTransform = currentTransform;
             var layoutGroup = new GameObject("HorizontalLayoutGroup", typeof(RHorizontalLayoutGroup)).GetComponent<RHorizontalLayoutGroup>();
-            layoutGroup.Tag = "HorizontalLayoutGroup";
             layoutGroup.transform.SetParent(currentTransform, false);
             layoutGroup.Init(height);
             currentTransform = layoutGroup.transform;
@@ -74,30 +78,31 @@ namespace RicKit.RDebug
             currentTransform = lastTransform;
         }
 
-        protected void CreateButton(string name, UnityAction onClick, int width = 100,
-            int height = 100, int fontSize = 30, string tag = "Button")
+        protected RButton CreateButton(string name, Action<RButton> onClick, int width = 100,
+            int height = 100, int fontSize = 30, Action<RButton> onUpdate = null)
         {
             var btn = new GameObject(tag, typeof(RButton)).GetComponent<RButton>();
-            btn.Tag = tag;
             btn.transform.SetParent(currentTransform, false);
-            btn.Init(name, onClick, width, height, fontSize, TextColor, BgColor, BgSprite);
+            btn.Init(name, onClick, width, height, fontSize, TextColor, BgColor, BgSprite, onUpdate);
+            return btn;
         }
 
-        protected void CreateInputField(string name, UnityAction<string> onValueChanged, int width = 100, int height = 100, int fontSize = 30,
-            string defaultValue = "", string tag = "InputField")
+        protected RInputField CreateInputField(string name, UnityAction<string> onValueChanged, int width = 100, int height = 100, int fontSize = 30,
+            string defaultValue = "", Action<RInputField> onUpdate = null)
         {
             var inputField = new GameObject(name, typeof(RInputField)).GetComponent<RInputField>();
-            inputField.Tag = tag;
             inputField.transform.SetParent(currentTransform, false);
             inputField.Init(name, onValueChanged, width, height, fontSize, defaultValue, TextColor, BgColor, BgSprite);
+            return inputField;
         }
 
-        protected void CreateLabel(string name, int width = 100, int height = 100, int fontSize = 30, string tag = "Label")
+        protected RLabel CreateLabel(string name, int width = 100, int height = 100, int fontSize = 30,
+            Action<RLabel> onUpdate = null)
         {
             var label = new GameObject(name, typeof(RLabel)).GetComponent<RLabel>();
-            label.Tag = tag;
             label.transform.SetParent(currentTransform, false);
-            label.Init(name, width, height, fontSize, TextColor, BgColor, BgSprite);
+            label.Init(name, width, height, fontSize, TextColor, BgColor, BgSprite, onUpdate);
+            return label;
         }
     }
 }

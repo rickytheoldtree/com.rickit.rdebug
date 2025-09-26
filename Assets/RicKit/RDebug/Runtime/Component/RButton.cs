@@ -1,15 +1,21 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace RicKit.RDebug.Component
 {
-    public class RButton : Button, IHaveTag
+    public class RButton : Button, IRComponent
     {
-        public string Tag { get; set; }
-        public void Init(string name, UnityAction onClick,int width, int height, int fontSize,
-            Color textColor, Color bgColor, Sprite bgSprite)
+        private Action<RButton> onUpdate;
+        public void OnUpdate()
         {
+            onUpdate?.Invoke(this);
+        }
+
+        public void Init(string name, Action<RButton> onClick,int width, int height, int fontSize,
+            Color textColor, Color bgColor, Sprite bgSprite, Action<RButton> onUpdate)
+        {
+            this.onUpdate = onUpdate;
             var img = gameObject.AddComponent<Image>();
             targetGraphic = img;
             if (bgSprite)
@@ -32,7 +38,7 @@ namespace RicKit.RDebug.Component
             txt.alignment = TextAnchor.MiddleCenter;
             txt.color = textColor;
             txt.fontSize = fontSize;
-            this.onClick.AddListener(onClick);
+            this.onClick.AddListener(() => onClick(this));
         }
     }
 }
