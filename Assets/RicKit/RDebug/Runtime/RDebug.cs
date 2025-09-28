@@ -62,7 +62,7 @@ namespace RicKit.RDebug
             panelShow = false;
             foreach (var component in transform.GetComponentsInChildren<UnityEngine.Component>())
             {
-                if(component == btnDebug) continue;
+                if(component.TryGetComponent<RButton>(out var btn) && btn == btnDebug) continue;
                 Destroy(component.gameObject);
             }
         }
