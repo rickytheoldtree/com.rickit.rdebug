@@ -1,0 +1,14 @@
+{
+  "name": "com.rickit.rdebug",
+  "displayName": "RicKit RDebug",
+  "author": {
+    "name": "LYQ"
+  },
+  "version": "1.2.2",
+  "unity": "2020.3",
+  "description": "Debugging tools for RicKit.",
+  "repository": {
+    "url": "https://github.com/rickytheoldtree/com.rickit.rdebug.git",
+    "type": "git"
+  }
+}
