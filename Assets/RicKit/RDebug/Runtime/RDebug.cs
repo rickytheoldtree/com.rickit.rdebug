@@ -40,7 +40,6 @@ namespace RicKit.RDebug
                 else
                 {
                     OnHide();
-                    components = null;
                 }
             });
         }
@@ -60,17 +59,22 @@ namespace RicKit.RDebug
         public void OnHide()
         {
             panelShow = false;
-            foreach (var component in transform.GetComponentsInChildren<UnityEngine.Component>())
+            if (components == null) return;
+            foreach (var component in components)
             {
-                if(component.TryGetComponent<RButton>(out var btn) && btn == btnDebug) continue;
-                Destroy(component.gameObject);
+                if (component is RButton rButton && rButton == btnDebug) continue;
+                if (component is MonoBehaviour monoBehaviour)
+                    Destroy(monoBehaviour.gameObject);
             }
+
+            components = null;
         }
 
         protected void UsingHorizontalLayoutGroup(Action action, int height = 100)
         {
             var lastTransform = currentTransform;
-            var layoutGroup = new GameObject("HorizontalLayoutGroup", typeof(RHorizontalLayoutGroup)).GetComponent<RHorizontalLayoutGroup>();
+            var layoutGroup = new GameObject("HorizontalLayoutGroup", typeof(RHorizontalLayoutGroup))
+                .GetComponent<RHorizontalLayoutGroup>();
             layoutGroup.transform.SetParent(currentTransform, false);
             layoutGroup.Init(height);
             currentTransform = layoutGroup.transform;
@@ -81,18 +85,19 @@ namespace RicKit.RDebug
         protected RButton CreateButton(string name, Action<RButton> onClick, int width = 100,
             int height = 100, int fontSize = 30, Action<RButton> onUpdate = null)
         {
-            var btn = new GameObject(tag, typeof(RButton)).GetComponent<RButton>();
+            var btn = new GameObject(name, typeof(RButton)).GetComponent<RButton>();
             btn.transform.SetParent(currentTransform, false);
             btn.Init(name, onClick, width, height, fontSize, TextColor, BgColor, BgSprite, onUpdate);
             return btn;
         }
 
-        protected RInputField CreateInputField(string name, UnityAction<string> onValueChanged, int width = 100, int height = 100, int fontSize = 30,
+        protected RInputField CreateInputField(string name, UnityAction<string> onValueChanged, int width = 100,
+            int height = 100, int fontSize = 30,
             string defaultValue = "", Action<RInputField> onUpdate = null)
         {
             var inputField = new GameObject(name, typeof(RInputField)).GetComponent<RInputField>();
             inputField.transform.SetParent(currentTransform, false);
-            inputField.Init(name, onValueChanged, width, height, fontSize, defaultValue, TextColor, BgColor, BgSprite);
+            inputField.Init(name, onValueChanged, width, height, fontSize, defaultValue, TextColor, BgColor, BgSprite, onUpdate);
             return inputField;
         }
 
